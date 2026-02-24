@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ocean Minute Wave Clock</title>
+  <link rel="stylesheet" href="clock.css" />
+</head>
+<body>
+  <div class="clock-wrapper">
+    <div class="sun"></div>
+
+    <div id="time" class="time">--:--:-- --</div>
+    <div id="date" class="date">Loading date…</div>
+
+    <div class="waves" id="waves">
+      <div class="wave-layer mid"></div>
+      <div class="wave-layer front"></div>
+    </div>
+  </div>
+
+  <script>
+    const timeEl = document.getElementById("time");
+    const dateEl = document.getElementById("date");
+    const wavesEl = document.getElementById("waves");
+
+    let lastMinute = null;
+
+    function pad(num) {
+      return num.toString().padStart(2, "0");
+    }
+
+    function updateClock() {
+      const now = new Date();
+
+      const hours24 = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      const hours12 = ((hours24 + 11) % 12) + 1;
+      const ampm = hours24 >= 12 ? "PM" : "AM";
+
+      timeEl.textContent = `${pad(hours12)}:${pad(minutes)}:${pad(seconds)} ${ampm}`;
+
+      const weekday = now.toLocaleDateString(undefined, { weekday: "long" });
+      const month = now.toLocaleDateString(undefined, { month: "short" });
+      const day = now.getDate();
+
+      dateEl.textContent = `${weekday.toUpperCase()} • ${month.toUpperCase()} ${day}`;
+
+      if (lastMinute === null) {
+        lastMinute = minutes;
+      } else if (minutes !== lastMinute) {
+        lastMinute = minutes;
+
+        wavesEl.classList.remove("splash");
+        void wavesEl.offsetWidth;
+        wavesEl.classList.add("splash");
+
+        setTimeout(() => {
+          wavesEl.classList.remove("splash");
+        }, 2000);
+      }
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
+
