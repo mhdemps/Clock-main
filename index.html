@@ -1,70 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Ocean Minute Wave Clock</title>
-  <link rel="stylesheet" href="clock.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clock</title>
+  <link rel="stylesheet" href="clock.css">
 </head>
 <body>
-  <div class="clock-wrapper">
-    <div class="sun"></div>
-
-    <div id="time" class="time">--:--:-- --</div>
-    <div id="date" class="date">Loading date…</div>
-
-    <div class="waves" id="waves">
-      <div class="wave-layer mid"></div>
-      <div class="wave-layer front"></div>
+  <div class="sky" id="sky">
+    <div class="sun" id="sun" aria-hidden="true"></div>
+    <div class="moon" id="moon" aria-hidden="true"></div>
+    <div class="clock-face">
+      <div class="hand hour-hand" id="hourHand"></div>
+      <div class="hand minute-hand" id="minuteHand"></div>
+      <div class="hand second-hand" id="secondHand"></div>
     </div>
   </div>
-
-  <script>
-    const timeEl = document.getElementById("time");
-    const dateEl = document.getElementById("date");
-    const wavesEl = document.getElementById("waves");
-
-    let lastMinute = null;
-
-    function pad(num) {
-      return num.toString().padStart(2, "0");
-    }
-
-    function updateClock() {
-      const now = new Date();
-
-      const hours24 = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
-
-      const hours12 = ((hours24 + 11) % 12) + 1;
-      const ampm = hours24 >= 12 ? "PM" : "AM";
-
-      timeEl.textContent = `${pad(hours12)}:${pad(minutes)}:${pad(seconds)} ${ampm}`;
-
-      const weekday = now.toLocaleDateString(undefined, { weekday: "long" });
-      const month = now.toLocaleDateString(undefined, { month: "short" });
-      const day = now.getDate();
-
-      dateEl.textContent = `${weekday.toUpperCase()} • ${month.toUpperCase()} ${day}`;
-
-      if (lastMinute === null) {
-        lastMinute = minutes;
-      } else if (minutes !== lastMinute) {
-        lastMinute = minutes;
-
-        wavesEl.classList.remove("splash");
-        void wavesEl.offsetWidth;
-        wavesEl.classList.add("splash");
-
-        setTimeout(() => {
-          wavesEl.classList.remove("splash");
-        }, 2000);
-      }
-    }
-
-    updateClock();
-    setInterval(updateClock, 1000);
-  </script>
+  <div class="ocean">
+    <svg class="wave-svg" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="waveGradDay" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(0,60,110,0.4)"/>
+          <stop offset="100%" stop-color="rgba(0,40,80,0.7)"/>
+        </linearGradient>
+        <linearGradient id="waveGradNight" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(0,35,65,0.5)"/>
+          <stop offset="100%" stop-color="rgba(0,20,45,0.85)"/>
+        </linearGradient>
+      </defs>
+      <!-- Rippled top edge: many small undulations (sine-like) -->
+      <path id="ripplePath1" class="ripple-path ripple1" fill="url(#waveGradDay)" d="M0,58 Q75,48 150,58 T300,58 T450,58 T600,58 T750,58 T900,58 T1050,58 T1200,58 L1200,120 L0,120 Z"/>
+      <path id="ripplePath2" class="ripple-path ripple2" fill="url(#waveGradDay)" d="M0,62 Q100,52 200,62 T400,62 T600,62 T800,62 T1000,62 T1200,62 L1200,120 L0,120 Z"/>
+      <path id="ripplePath3" class="ripple-path ripple3" fill="url(#waveGradDay)" d="M0,66 Q125,56 250,66 T500,66 T750,66 T1000,66 L1200,66 L1200,120 L0,120 Z"/>
+    </svg>
+  </div>
+  <script src="clock.js"></script>
 </body>
 </html>
-
