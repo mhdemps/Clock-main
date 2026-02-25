@@ -166,3 +166,36 @@ body.night .ripple-path {
     transform: translateX(-1%) scaleY(0.98);
   }
 }
+(function () {
+  const hourHand = document.getElementById('hourHand');
+  const minuteHand = document.getElementById('minuteHand');
+  const secondHand = document.getElementById('secondHand');
+  const body = document.body;
+
+  function setTime() {
+    const now = new Date();
+    const hours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const minutes = now.getMinutes() + now.getSeconds() / 60;
+    const seconds = now.getSeconds() + (now.getMilliseconds() || 0) / 1000;
+
+    const hourDeg = (hours % 12) * 30;
+    const minuteDeg = minutes * 6;
+    const secondDeg = seconds * 6;
+
+    if (hourHand) hourHand.style.transform = `translateX(-3px) rotate(${hourDeg}deg)`;
+    if (minuteHand) minuteHand.style.transform = `translateX(-2px) rotate(${minuteDeg}deg)`;
+    if (secondHand) secondHand.style.transform = `translateX(-1px) rotate(${secondDeg}deg)`;
+
+    // Night (moon, navy): 6pm–6am. Day (sun, blue sky): 6am–6pm.
+    const hour = now.getHours();
+    const isNight = hour >= 18 || hour < 6;
+    if (isNight) {
+      body.classList.add('night');
+    } else {
+      body.classList.remove('night');
+    }
+  }
+
+  setTime();
+  setInterval(setTime, 100);
+})();
