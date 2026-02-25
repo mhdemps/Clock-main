@@ -1,122 +1,168 @@
-/* Page setup */
+/* Time-of-day colors: day = sky gradient, evening/night = navy */
+:root {
+  --sky-top: #87ceeb;
+  --sky-bottom: #e0f4ff;
+  --sky-transition: 1.2s ease;
+}
+
+body.night {
+  --sky-top: #0a1628;
+  --sky-bottom: #132f4c;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #d3d3d3; /* required background */
-  font-family: "Diatype", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-}
-
-/* Clock card */
-.clock-wrapper {
-  position: relative;
-  width: 320px;
-  height: 320px;
-  padding: 24px;
-  border-radius: 24px;
-  background: linear-gradient(to bottom, #5fb3ff 0%, #1c7bbf 55%, #0b4f79 100%);
-  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.25);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  font-family: system-ui, sans-serif;
 }
 
-.time {
-  position: relative;
-  z-index: 2;
-  color: #f8fbff;
-  font-size: 2.8rem;
-  letter-spacing: 0.12em;
-  text-align: center;
+.sky {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 50%, #1a3a5c 100%);
+  transition: background linear 1.5s;
 }
 
-.date {
-  position: relative;
-  z-index: 2;
-  margin-top: 0.5rem;
-  color: rgba(240, 250, 255, 0.9);
-  font-size: 0.9rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-align: center;
+body.night .sky {
+  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 45%, #0d2137 100%);
 }
 
-/* Simple sun */
+/* Sun: visible before 6pm */
 .sun {
   position: absolute;
-  top: 40px;
-  right: 40px;
-  width: 46px;
-  height: 46px;
+  width: 80px;
+  height: 80px;
+  top: 22%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff8d1 0%, #ffd166 40%, #f7b733 100%);
-  box-shadow: 0 0 25px rgba(255, 209, 102, 0.9);
-  z-index: 1;
+  background: radial-gradient(circle at 30% 30%, #fff8dc, #ffd700 40%, #ff8c00);
+  box-shadow: 0 0 60px 20px rgba(255, 220, 100, 0.5);
+  opacity: 1;
+  transition: opacity 0.8s ease;
 }
 
-/* Waves at the bottom */
-.waves {
+body.night .sun {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Moon: visible at and after 6pm */
+.moon {
   position: absolute;
-  left: -10%;
-  bottom: -8px;
-  width: 120%;
-  height: 45%;
-  background:
-    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.45) 0, transparent 60%),
-    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.35) 0, transparent 60%),
-    linear-gradient(to top, #0b4f79 0%, #176ba0 35%, #2f80c7 100%);
-  border-radius: 50% 50% 0 0;
+  width: 70px;
+  height: 70px;
+  top: 22%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f5f5dc, #e8e8d0 50%, #c0c0a0);
+  box-shadow: 
+    inset -8px -8px 0 0 rgba(20, 25, 40, 0.4),
+    0 0 40px 12px rgba(220, 220, 255, 0.25);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+body.night .moon {
+  opacity: 1;
+}
+
+/* Clock face */
+.clock-face {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 4px solid rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+}
+
+.hour-hand {
+  width: 6px;
+  height: 42px;
+  margin-left: -3px;
+}
+
+.minute-hand {
+  width: 4px;
+  height: 58px;
+  margin-left: -2px;
+}
+
+.second-hand {
+  width: 2px;
+  height: 62px;
+  margin-left: -1px;
+  background: rgba(255, 200, 100, 0.95);
+}
+
+/* Ocean: rippled waves (sine-style with subtle ripple animation) */
+.ocean {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 38%;
   overflow: hidden;
-  transform: translateY(0);
-  z-index: 1;
 }
 
-/* Extra small wave layers for texture */
-.wave-layer {
+.wave-svg {
   position: absolute;
-  left: -20%;
-  width: 160%;
-  height: 55%;
-  border-radius: 50% 50% 0 0;
-  opacity: 0.55;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-.wave-layer.front {
-  bottom: -5px;
-  background: radial-gradient(circle at 15% 0, rgba(255, 255, 255, 0.8) 0, transparent 50%),
-              radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.75) 0, transparent 55%),
-              linear-gradient(to top, #0a4264 0%, #135b8a 40%, #1a6faf 100%);
+.ripple-path {
+  transform-origin: 50% 100%;
+  transition: fill 1s ease;
 }
 
-.wave-layer.mid {
-  bottom: 16px;
-  background: radial-gradient(circle at 30% 5%, rgba(255, 255, 255, 0.6) 0, transparent 55%),
-              radial-gradient(circle at 75% 5%, rgba(255, 255, 255, 0.55) 0, transparent 55%),
-              linear-gradient(to top, #0c567d 0%, #166ba3 40%, #1f7fc4 100%);
+body.night .ripple-path {
+  fill: url(#waveGradNight);
 }
 
-/* One-time "lap" animation each new minute */
-.waves.splash {
-  animation: minuteLap 1.8s ease-out;
+/* Subtle ripple animation: gentle horizontal phase shift */
+.ripple1 {
+  animation: rippleShift 5s ease-in-out infinite;
+  opacity: 0.9;
 }
 
-@keyframes minuteLap {
-  0% {
-    transform: translateY(18px);
+.ripple2 {
+  animation: rippleShift 6s ease-in-out infinite 0.6s;
+  opacity: 0.75;
+}
+
+.ripple3 {
+  animation: rippleShift 7s ease-in-out infinite 1.2s;
+  opacity: 0.6;
+}
+
+@keyframes rippleShift {
+  0%, 100% {
+    transform: translateX(0) scaleY(1);
   }
-  35% {
-    transform: translateY(-12px);
+  33% {
+    transform: translateX(1.5%) scaleY(1.02);
   }
-  70% {
-    transform: translateY(4px);
-  }
-  100% {
-    transform: translateY(0);
+  66% {
+    transform: translateX(-1%) scaleY(0.98);
   }
 }
-
